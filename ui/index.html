@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Transformer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg: #0f1419;
+            --bg2: #1a1f2e;
+            --bg3: #252d3d;
+            --border: #3a4557;
+            --text: #e8eef7;
+            --text2: #a0aac4;
+            --blue: #5b9bea;
+            --purple: #8b5cf6;
+            --green: #10b981;
+            --red: #ef4444;
+            --yellow: #f59e0b;
+        }
+        
+        html.light {
+            --bg: #ffffff;
+            --bg2: #f8fafb;
+            --bg3: #f0f4f8;
+            --border: #d0d8e0;
+            --text: #1a202c;
+            --text2: #718096;
+            --blue: #0ea5e9;
+            --purple: #7c3aed;
+            --green: #059669;
+            --red: #dc2626;
+            --yellow: #d97706;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: all 0.3s;
+        }
+        
+        #root { min-height: 100vh; }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background-color: var(--bg2);
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+            border-radius: 12px;
+        }
+        
+        .navbar h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .navbar p {
+            font-size: 0.85rem;
+            color: var(--text2);
+            margin-top: 0.25rem;
+        }
+        
+        .navbar-right {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .btn-theme {
+            padding: 0.5rem 1rem;
+            background-color: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-theme:hover {
+            border-color: var(--blue);
+        }
+        
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 0 2rem 2rem 2rem;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        @media (max-width: 1200px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+        
+        .card {
+            background-color: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.2s;
+        }
+        
+        .card:hover {
+            border-color: var(--blue);
+            box-shadow: 0 0 20px rgba(91, 155, 234, 0.1);
+        }
+        
+        .card h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        
+        .step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            color: white;
+            border-radius: 50%;
+            font-weight: 700;
+        }
+        
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+            color: var(--text);
+        }
+        
+        .input-group input,
+        .input-group textarea {
+            width: 100%;
+            padding: 0.875rem;
+            background-color: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        
+        .input-group input:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(91, 155, 234, 0.15);
+        }
+        
+        .input-group input[type="file"]::file-selector-button {
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-right: 1rem;
+        }
+        
+        .file-badge {
+            display: inline-block;
+            margin-top: 0.6rem;
+            padding: 0.5rem 1rem;
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--green);
+            color: var(--green);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(91, 155, 234, 0.3);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .error-msg {
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--red);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            color: var(--red);
+            font-size: 0.9rem;
+        }
+        
+        .success-msg {
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--green);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            color: var(--green);
+            font-size: 0.9rem;
+        }
+        
+        .profile-card {
+            background: linear-gradient(135deg, var(--bg3), var(--bg2));
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .profile-name {
+            font-size: 2.2rem;
+            font-weight: 800;
+        }
+        
+        .confidence-badge {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-align: center;
+            min-width: 120px;
+            white-space: nowrap;
+        }
+        
+        .conf-high {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: var(--green);
+            border: 1px solid var(--green);
+        }
+        
+        .conf-med {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: var(--yellow);
+            border: 1px solid var(--yellow);
+        }
+        
+        .conf-low {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: var(--red);
+            border: 1px solid var(--red);
+        }
+        
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+        
+        .field {
+            margin-bottom: 1.2rem;
+        }
+        
+        .field-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.4rem;
+        }
+        
+        .field-value {
+            font-size: 1rem;
+            color: var(--text);
+            word-break: break-word;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border);
+            overflow-x: auto;
+        }
+        
+        .tab-btn {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text2);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        
+        .tab-btn.active {
+            color: var(--blue);
+            border-bottom-color: var(--blue);
+        }
+        
+        .tab-btn:hover {
+            color: var(--text);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .skill-card {
+            background-color: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.25rem;
+            transition: all 0.2s;
+        }
+        
+        .skill-card:hover {
+            border-color: var(--blue);
+        }
+        
+        .skill-name {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 0.6rem;
+            color: var(--text);
+        }
+        
+        .skill-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text2);
+            margin-bottom: 0.8rem;
+        }
+        
+        .skill-conf {
+            font-weight: 700;
+            color: var(--blue);
+        }
+        
+        .progress {
+            width: 100%;
+            height: 6px;
+            background-color: var(--bg2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--blue), var(--purple));
+            transition: width 0.3s ease;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        
+        .table th {
+            text-align: left;
+            padding: 0.875rem;
+            background-color: var(--bg3);
+            border-bottom: 2px solid var(--border);
+            font-weight: 700;
+            color: var(--text2);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+        
+        .table td {
+            padding: 0.875rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+        }
+        
+        .table tbody tr:hover {
+            background-color: rgba(91, 155, 234, 0.05);
+        }
+        
+        .json-box {
+            background-color: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: #86efac;
+            max-height: 500px;
+            overflow-y: auto;
+            line-height: 1.4;
+            white-space: pre-wrap;
+        }
+        
+        .empty {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text2);
+        }
+        
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .download-btn {
+            background-color: var(--green);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        
+        .download-btn:hover {
+            background-color: #0da973;
+        }
+        
+        .col-full { grid-column: 1 / -1; }
+        
+        .flex-space {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 0.6rem;
+        }
+        
+        /* ── HISTORY MODAL ── */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0,0,0,0.55);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal {
+            background-color: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            max-width: 560px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .modal h2 { margin-bottom: 1.5rem; }
+
+        .hist-item {
+            background-color: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.875rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .hist-item:hover { border-color: var(--blue); }
+        .hist-info h4 { font-size: 0.95rem; margin-bottom: 0.2rem; }
+        .hist-info p { font-size: 0.8rem; color: var(--text2); }
+        .hist-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+
+        .btn-sm {
+            padding: 0.45rem 0.875rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background-color: var(--bg2);
+            color: var(--text);
+            transition: background-color 0.2s;
+        }
+
+        .btn-sm:hover { background-color: var(--border); }
+        .btn-sm-del { border-color: var(--red); color: var(--red); background: none; }
+        .btn-sm-del:hover { background-color: rgba(239,68,68,0.1); }
+
+        .btn-close {
+            width: 100%;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background-color: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-close:hover { background-color: var(--border); }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        
+        /* ── helpers ── */
+        const pct = (v) => `${((v ?? 0) * 100).toFixed(0)}%`;
+        
+        function App() {
+            const [isDark, setIsDark] = useState(true);
+            const [csv, setCsv] = useState(null);
+            const [resume, setResume] = useState(null);
+            const [github, setGithub] = useState('');
+            const [applyConfig, setApplyConfig] = useState(false); // DEFAULT TO FALSE (Returns Full Profile by Default!)
+            const [config, setConfig] = useState(JSON.stringify({
+                "fields": [
+                    {"path": "full_name",    "type": "string", "required": true},
+                    {"path": "primary_email","from": "emails[0]", "type": "string"},
+                    {"path": "phone",        "from": "phones[0]", "type": "string", "normalize": "E164"}
+                ],
+                "include_confidence": true,
+                "on_missing": "null"
+            }, null, 2));
+            const [configError, setConfigError] = useState(null);
+            
+            const [loading, setLoading] = useState(false);
+            const [error,   setError]   = useState(null);
+            const [success, setSuccess] = useState(null);
+            const [result,  setResult]  = useState(null);
+            const [tab,     setTab]     = useState('skills');
+            const [history, setHistory] = useState([]);
+            const [showHist, setShowHist] = useState(false);
+            
+            useEffect(() => {
+                if (isDark) {
+                    document.documentElement.classList.remove('light');
+                } else {
+                    document.documentElement.classList.add('light');
+                }
+            }, [isDark]);
+            
+            useEffect(() => {
+                const saved = localStorage.getItem('cand-hist');
+                if (saved) {
+                    try { setHistory(JSON.parse(saved)); } catch (e) {}
+                }
+            }, []);
+            
+            useEffect(() => {
+                localStorage.setItem('cand-hist', JSON.stringify(history));
+            }, [history]);
+            
+            const handleConfigChange = (e) => {
+                setConfig(e.target.value);
+                setConfigError(null); // clear error while typing
+            };
+
+            const handleConfigBlur = (e) => {
+                if (!e.target.value.trim()) return;
+                try {
+                    JSON.parse(e.target.value);
+                    setConfigError(null);
+                } catch {
+                    setConfigError("Invalid JSON — check for missing commas, brackets, or quotes.");
+                }
+            };
+            
+            const run = async (e) => {
+                e.preventDefault();
+                setError(null);
+                setSuccess(null);
+                setLoading(true);
+                
+                try {
+                    if (!csv && !resume && !github.trim()) {
+                        throw new Error('Provide CSV, Resume, or GitHub username');
+                    }
+                    
+                    const fd = new FormData();
+                    if (csv) fd.append('csv_file', csv);
+                    if (resume) fd.append('resume_file', resume);
+                    if (github.trim()) fd.append('github_username', github.trim());
+                    
+                    if (applyConfig) {
+                        try {
+                            JSON.parse(config);
+                        } catch (e) {
+                            throw new Error('Output config is not valid JSON');
+                        }
+                        fd.append('config', config);
+                    }
+                    
+                    const res = await fetch('/transform', {
+                        method: 'POST',
+                        body: fd
+                    });
+                    
+                    const data = await res.json();
+                    if (data.error) throw new Error(data.error);
+                    
+                    setResult(data);
+                    setSuccess('Transformation complete!');
+                    setHistory(prev => [{
+                        id: Date.now(),
+                        ts: new Date().toLocaleString(),
+                        name: data.full_name || data.name || 'Unnamed',
+                        conf: data.overall_confidence ?? 0,
+                        data: data
+                    }, ...prev.slice(0, 9)]);
+                    
+                } catch (e) {
+                    setError(e.message);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            
+            const dlJson = () => {
+                if (!result) return;
+                const blob = new Blob([JSON.stringify(result, null, 2)], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `profile-${result.candidate_id || 'export'}.json`;
+                a.click();
+            };
+            
+            const dlCsv = () => {
+                if (!result) return;
+                let csvContent = 'Field,Value\n';
+                csvContent += `Full Name,"${result.full_name || result.name || ''}"\n`;
+                csvContent += `Email,"${result.emails?.[0] || result.primary_email || result.email || ''}"\n`;
+                csvContent += `Phone,"${result.phones?.[0] || result.phone || result.telephone || ''}"\n`;
+                csvContent += `Confidence,${((result.overall_confidence ?? 0) * 100).toFixed(0)}%\n`;
+                const blob = new Blob([csvContent], {type: 'text/csv'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `profile-${result.candidate_id || 'export'}.csv`;
+                a.click();
+            };
+            
+            const confClass = (val) => {
+                if (val >= 0.75) return 'conf-high';
+                if (val >= 0.5) return 'conf-med';
+                return 'conf-low';
+            };
+            
+            // Map canonical and custom/projected property paths gracefully
+            const emailVal = result ? (result.emails?.[0] || result.primary_email || result.email || '—') : '—';
+            const phoneVal = result ? (result.phones?.[0] || result.phone || result.telephone || '—') : '—';
+            const headlineVal = result ? (result.headline || result.title || '—') : '—';
+            const locationVal = result ? ([
+                result.location?.city || result.city,
+                result.location?.region || result.region,
+                result.location?.country || result.country
+            ].filter(Boolean).join(', ') || '—') : '—';
+            const expYearsVal = result ? (result.years_experience ?? result.experience_years ?? '—') : '—';
+            const githubUrlVal = result ? (result.links?.github || result.github_username || result.github || null) : null;
+            
+            const skillsList = result ? (result.skills || result.technical_skills || []).map(s => {
+                if (typeof s === 'string') return { name: s, confidence: result.overall_confidence ?? 0.8, sources: ['projected'] };
+                return {
+                    name: s.name || s.skill_name || '',
+                    confidence: s.confidence ?? 0.8,
+                    sources: s.sources || []
+                };
+            }) : [];
+            
+            const expList = result ? (result.experience || result.work_experience || []) : [];
+            const eduList = result ? (result.education || []) : [];
+            const provList = result ? (result.provenance || []) : [];
+            
+            // Synthesize certifications dynamically from education or skills containing cert keywords
+            const certsList = result ? (() => {
+                const list = [];
+                skillsList.forEach(s => {
+                    const lName = s.name.toLowerCase();
+                    if (lName.includes('certif') || lName.includes('certified') || lName.includes('license')) {
+                        list.push({ name: s.name, type: 'Technical Certification', authority: s.sources?.join(', ') || 'Resume' });
+                    }
+                });
+                eduList.forEach(e => {
+                    const text = [e.degree, e.field].filter(Boolean).join(' ').toLowerCase();
+                    if (text.includes('certif') || text.includes('certified') || text.includes('license')) {
+                        list.push({ name: `${e.degree || ''} ${e.field ? 'in ' + e.field : ''}`.trim() || 'Certificate', type: 'Academic Certification', authority: e.institution || 'Education Section' });
+                    }
+                });
+                return list;
+            })() : [];
+            
+            const hasInput = csv || resume || github.trim();
+            
+            return (
+                <div>
+                    <div className="navbar">
+                        <div>
+                            <h1>Candidate Transformer</h1>
+                            <p>Unified profiles from multiple sources</p>
+                        </div>
+                        <div className="navbar-right">
+                            <button className="btn-theme" onClick={() => setIsDark(!isDark)}>
+                                {isDark ? '☀️' : '🌙'} Theme
+                            </button>
+                            <button className="btn-theme" onClick={() => setShowHist(true)}>📋 History ({history.length})</button>
+                        </div>
+                    </div>
+                    
+                    <div className="container">
+                        {error && <div className="error-msg">⚠ {error}</div>}
+                        {success && <div className="success-msg">✓ {success}</div>}
+                        
+                        <div className="grid">
+                            <div className="card">
+                                <h2><span className="step-num">1</span> Input Sources</h2>
+                                <form onSubmit={run}>
+                                    <div className="input-group">
+                                        <label>Recruiter CSV</label>
+                                        <input type="file" accept=".csv" onChange={(e) => setCsv(e.target.files?.[0] || null)} />
+                                        {csv && <div className="file-badge">✓ {csv.name}</div>}
+                                    </div>
+                                    
+                                    <div className="input-group">
+                                        <label>Resume (PDF / TXT)</label>
+                                        <input type="file" accept=".pdf,.txt" onChange={(e) => setResume(e.target.files?.[0] || null)} />
+                                        {resume && <div className="file-badge">✓ {resume.name}</div>}
+                                    </div>
+                                    
+                                    <div className="input-group">
+                                        <label>GitHub Username</label>
+                                        <input type="text" placeholder="e.g., torvalds" value={github} onChange={(e) => setGithub(e.target.value)} />
+                                    </div>
+                                    
+                                    <button type="submit" className="btn-primary" disabled={loading || !hasInput}>
+                                        {loading ? <><div className="spinner"></div> Processing</> : '▶ Run Pipeline'}
+                                    </button>
+                                </form>
+                            </div>
+                            
+                            <div className="card">
+                                <h2><span className="step-num">2</span> Output Config</h2>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1rem' }}>
+                                    <input 
+                                        type="checkbox" 
+                                        id="apply-config-checkbox"
+                                        checked={applyConfig} 
+                                        onChange={(e) => setApplyConfig(e.target.checked)} 
+                                        style={{ width: 'auto', cursor: 'pointer' }}
+                                    />
+                                    <label htmlFor="apply-config-checkbox" style={{ margin: 0, cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600 }}>
+                                        Apply Output Projection Configuration
+                                    </label>
+                                </div>
+                                <div className="input-group" style={{ opacity: applyConfig ? 1 : 0.6, transition: 'opacity 0.2s' }}>
+                                    <label>Runtime Config (JSON)</label>
+                                    <textarea
+                                        value={config}
+                                        onChange={handleConfigChange}
+                                        onBlur={handleConfigBlur}
+                                        disabled={!applyConfig}
+                                        rows="11"
+                                        style={{
+                                            fontFamily: "'Courier New', monospace",
+                                            fontSize: '0.83rem',
+                                            borderColor: configError ? 'var(--red)' : undefined
+                                        }}
+                                    ></textarea>
+                                    {configError && (
+                                        <div style={{
+                                            color: 'var(--red)',
+                                            fontSize: '0.8rem',
+                                            marginTop: '0.4rem',
+                                            padding: '0.4rem 0.6rem',
+                                            background: 'rgba(239,68,68,0.08)',
+                                            borderRadius: '6px',
+                                            border: '1px solid var(--red)'
+                                        }}>
+                                            ⚠ {configError}
+                                        </div>
+                                    )}
+                                    {!configError && config.trim() && (
+                                        <div style={{
+                                            color: 'var(--green)',
+                                            fontSize: '0.8rem',
+                                            marginTop: '0.4rem'
+                                        }}>
+                                            ✓ Valid JSON
+                                        </div>
+                                    )}
+                                </div>
+                                <p style={{fontSize: '0.8rem', color: 'var(--text2)', marginTop: '0.3rem'}}>
+                                    💡 Customize fields, types, and missing-value policies
+                                </p>
+                            </div>
+                        </div>
+                        
+                        {result && (
+                            <div className="card col-full">
+                                {applyConfig && (
+                                    <div style={{ backgroundColor: 'rgba(91, 155, 234, 0.1)', border: '1px solid var(--blue)', borderRadius: '8px', padding: '0.5rem 1rem', marginBottom: '1.5rem', fontSize: '0.85rem', fontWeight: 600, color: 'var(--blue)' }}>
+                                        ℹ️ Projected Output View: Output configuration applied. Certain fields may be omitted/reshaped.
+                                    </div>
+                                )}
+                                <div className="flex-space">
+                                    <h2 style={{margin: 0}}><span className="step-num">3</span> Canonical Profile</h2>
+                                    <div className="btn-group">
+                                        <button className="download-btn" onClick={dlJson}>📥 JSON</button>
+                                        <button className="download-btn" onClick={dlCsv}>📥 CSV</button>
+                                    </div>
+                                </div>
+                                
+                                <div className="profile-card">
+                                    <div className="profile-header">
+                                        <div>
+                                            <div className="profile-name">{result.full_name || result.name || 'N/A'}</div>
+                                            <div className="field-label" style={{marginTop:'0.5rem'}}>Candidate ID</div>
+                                            <div className="field-value" style={{fontFamily:"monospace", fontSize:'0.85rem'}}>
+                                                {result.candidate_id || 'N/A'}
+                                            </div>
+                                        </div>
+                                        <div className={`confidence-badge ${confClass(result.overall_confidence ?? 0)}`}>
+                                            {pct(result.overall_confidence ?? 0)}<br/>
+                                            <span style={{fontSize:'0.75rem', fontWeight:500}}>Confidence</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="profile-grid">
+                                        <div>
+                                            <div className="field">
+                                                <div className="field-label">Email</div>
+                                                <div className="field-value">{emailVal}</div>
+                                            </div>
+                                            <div className="field">
+                                                <div className="field-label">Phone</div>
+                                                <div className="field-value">{phoneVal}</div>
+                                            </div>
+                                            <div className="field">
+                                                <div className="field-label">Location</div>
+                                                <div className="field-value">{locationVal}</div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div className="field">
+                                                <div className="field-label">Headline</div>
+                                                <div className="field-value">{headlineVal}</div>
+                                            </div>
+                                            <div className="field">
+                                                <div className="field-label">Experience</div>
+                                                <div className="field-value">{expYearsVal !== '—' ? `${expYearsVal} yrs` : '—'}</div>
+                                            </div>
+                                            <div className="field">
+                                                <div className="field-label">GitHub</div>
+                                                <div className="field-value">
+                                                    {githubUrlVal ? (
+                                                        <a href={githubUrlVal} target="_blank" style={{color:'var(--blue)'}}>{githubUrlVal}</a>
+                                                    ) : '—'}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div className="tabs">
+                                    {['skills','exp','edu','certs','prov','json'].map(t => (
+                                        <button key={t}
+                                            className={`tab-btn ${tab===t?'active':''}`}
+                                            onClick={() => setTab(t)}>
+                                            {{skills:'Skills',exp:'Experience',edu:'Education',certs:'Certifications',prov:'Provenance',json:'Raw JSON'}[t]}
+                                        </button>
+                                    ))}
+                                </div>
+                                
+                                <div className={`tab-content ${tab === 'skills' ? 'active' : ''}`}>
+                                    {skillsList.length ? (
+                                        <div className="skills-grid">
+                                            {skillsList.map((s, i) => (
+                                                <div key={i} className="skill-card">
+                                                    <div className="skill-name">{s.name}</div>
+                                                    <div className="skill-meta">
+                                                        <span className="skill-conf">{pct(s.confidence)}</span>
+                                                        <span>{(s.sources||[]).join(', ')}</span>
+                                                    </div>
+                                                    <div className="progress">
+                                                        <div className="progress-fill" style={{width: `${s.confidence * 100}%`}}></div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="empty"><p>No skills found</p></div>
+                                    )}
+                                </div>
+                                
+                                <div className={`tab-content ${tab === 'exp' ? 'active' : ''}`}>
+                                    {expList.length ? (
+                                        expList.map((e, i) => (
+                                            <div key={i} style={{marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '1px solid var(--border)'}}>
+                                                <div style={{fontWeight: '700', marginBottom: '0.3rem'}}>{e.title || 'Unknown Title'}</div>
+                                                <div style={{fontSize: '0.9rem', color: 'var(--text2)', marginBottom: '0.5rem'}}>
+                                                    {e.company || 'Unknown Company'} • {e.start || 'Unknown'} to {e.end || 'Present'}
+                                                </div>
+                                                <div style={{fontSize: '0.9rem'}}>{e.summary || ''}</div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="empty"><p>No experience details found</p></div>
+                                    )}
+                                </div>
+                                
+                                <div className={`tab-content ${tab === 'edu' ? 'active' : ''}`}>
+                                    {eduList.length ? (
+                                        <table className="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Institution</th>
+                                                    <th>Degree</th>
+                                                    <th>Field</th>
+                                                    <th>Year</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {eduList.map((e, i) => (
+                                                    <tr key={i}>
+                                                        <td>{e.institution || '—'}</td>
+                                                        <td>{e.degree || '—'}</td>
+                                                        <td>{e.field || '—'}</td>
+                                                        <td>{e.end_year || '—'}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    ) : (
+                                        <div className="empty"><p>No education details found</p></div>
+                                    )}
+                                </div>
+                                
+                                <div className={`tab-content ${tab === 'certs' ? 'active' : ''}`}>
+                                    {certsList.length ? (
+                                        <table className="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Certification / Credential Name</th>
+                                                    <th>Type</th>
+                                                    <th>Authority / Source</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {certsList.map((c, i) => (
+                                                    <tr key={i}>
+                                                        <td><strong>{c.name}</strong></td>
+                                                        <td>{c.type}</td>
+                                                        <td>{c.authority}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    ) : (
+                                        <div className="empty">
+                                            <p>No certifications detected in the profile.</p>
+                                            <p style={{fontSize:'0.8rem', color:'var(--text2)', marginTop:'0.5rem'}}>
+                                                (Note: Certifications are extracted from skills or education entries containing "certified" or "certification".)
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                                
+                                <div className={`tab-content ${tab === 'prov' ? 'active' : ''}`}>
+                                    {provList.length ? (
+                                        <table className="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Field Name</th>
+                                                    <th>Source</th>
+                                                    <th>Method</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {provList.map((p, i) => (
+                                                    <tr key={i}>
+                                                        <td>{p.field}</td>
+                                                        <td>{p.source}</td>
+                                                        <td>{p.method}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    ) : (
+                                        <div className="empty"><p>No provenance details found</p></div>
+                                    )}
+                                </div>
+                                
+                                <div className={`tab-content ${tab === 'json' ? 'active' : ''}`}>
+                                    <div className="json-box">{JSON.stringify(result, null, 2)}</div>
+                                </div>
+                            </div>
+                        )}
+                        
+                        {!result && !loading && (
+                            <div className="card col-full">
+                                <div className="empty">
+                                    <div className="empty-icon">📋</div>
+                                    <p>Submit input sources to generate canonical profile</p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    
+                    {/* ── HISTORY MODAL ── */}
+                    {showHist && (
+                        <div className="modal-backdrop" onClick={() => setShowHist(false)}>
+                            <div className="modal" onClick={e => e.stopPropagation()}>
+                                <h2>Transformation History</h2>
+                                {history.length ? (
+                                    history.map(h => (
+                                        <div key={h.id} className="hist-item">
+                                            <div className="hist-info">
+                                                <h4>{h.name}</h4>
+                                                <p>{h.ts} • {pct(h.conf)} confidence</p>
+                                            </div>
+                                            <div className="hist-actions">
+                                                <button className="btn-sm" onClick={() => {
+                                                    setResult(h.data);
+                                                    setTab('skills');
+                                                    setShowHist(false);
+                                                }}>View</button>
+                                                <button className="btn-sm btn-sm-del" onClick={() => {
+                                                    setHistory(history.filter(x => x.id !== h.id));
+                                                }}>Delete</button>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="empty"><p>No history yet</p></div>
+                                )}
+                                <button className="btn-close" onClick={() => setShowHist(false)}>Close</button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+        
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

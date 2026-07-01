@@ -1,0 +1,4 @@
+name,email,phone,current_company,title
+Alice Smith,alice.smith@example.com,+14155552671,Google,Software Engineer
+Bob Jones,bob.jones@example.com,,Meta,Product Manager
+Charlie Brown,charlie.brown_at_example.com,+16505553456,Netflix,Data Scientist

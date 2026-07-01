@@ -1,0 +1,18 @@
+{
+  "full_name": "Alice Smith",
+  "primary_email": "alice.smith@example.com",
+  "phone": "+14155552671",
+  "skills": [
+    "AWS",
+    "C",
+    "C++",
+    "Docker",
+    "Go",
+    "JavaScript",
+    "Openscad",
+    "PostgreSQL",
+    "Python",
+    "React"
+  ],
+  "overall_confidence": 0.86
+}

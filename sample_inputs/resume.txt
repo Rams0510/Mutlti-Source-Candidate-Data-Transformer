@@ -1,0 +1,22 @@
+Alice Smith
+Senior Backend Engineer
+alice.smith@example.com | +1 415 555 2671 | San Francisco, CA
+https://linkedin.com/in/alicesmith | https://github.com/alicesmith
+
+Summary
+Dynamic Software Developer with 3 years of experience building scalable backend microservices.
+
+Skills
+Python, JS, React, Go, Docker, AWS, PostgreSQL, K8s
+
+Experience
+Tech Corp - Senior Software Engineer
+Jan 2024 - Present
+Designed and optimized distributed microservices handling millions of requests daily. Maintained Kubernetes configurations and Postgres instances.
+
+Startup Inc - Software Engineer
+Jan 2022 - Dec 2023
+Developed core REST API endpoints and user interface panels. Integrated payment gateways and message queues.
+
+Education
+Stanford University - BS in Computer Science, 2021

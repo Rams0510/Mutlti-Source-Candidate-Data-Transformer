@@ -1,0 +1,179 @@
+{
+  "candidate_id": "7dcd3a39ad3a",
+  "full_name": "Alice Smith",
+  "emails": [
+    "alice.smith@example.com",
+    "bob.jones@example.com"
+  ],
+  "phones": [
+    "+14155552671",
+    "+16505553456"
+  ],
+  "location": {
+    "city": "Portland",
+    "region": null,
+    "country": "OR"
+  },
+  "links": {
+    "linkedin": "https://linkedin.com/in/alicesmith",
+    "github": "https://github.com/torvalds",
+    "portfolio": null,
+    "other": []
+  },
+  "headline": "Senior Backend Engineer",
+  "years_experience": 3.0,
+  "skills": [
+    {
+      "name": "AWS",
+      "confidence": 0.8,
+      "sources": [
+        "resume"
+      ]
+    },
+    {
+      "name": "C",
+      "confidence": 0.6,
+      "sources": [
+        "github"
+      ]
+    },
+    {
+      "name": "C++",
+      "confidence": 0.6,
+      "sources": [
+        "github"
+      ]
+    },
+    {
+      "name": "Docker",
+      "confidence": 0.8,
+      "sources": [
+        "resume"
+      ]
+    },
+    {
+      "name": "Go",
+      "confidence": 0.8,
+      "sources": [
+        "resume"
+      ]
+    },
+    {
+      "name": "JavaScript",
+      "confidence": 0.8,
+      "sources": [
+        "resume"
+      ]
+    },
+    {
+      "name": "Openscad",
+      "confidence": 0.6,
+      "sources": [
+        "github"
+      ]
+    },
+    {
+      "name": "PostgreSQL",
+      "confidence": 0.8,
+      "sources": [
+        "resume"
+      ]
+    },
+    {
+      "name": "Python",
+      "confidence": 0.8,
+      "sources": [
+        "resume"
+      ]
+    },
+    {
+      "name": "React",
+      "confidence": 0.8,
+      "sources": [
+        "resume"
+      ]
+    }
+  ],
+  "experience": [
+    {
+      "company": "Tech Corp",
+      "title": "Senior Software Engineer",
+      "start": "2024-01",
+      "end": null,
+      "summary": "Designed and optimized distributed microservices handling millions of requests daily. Maintained Kubernetes configurations and Postgres instances."
+    },
+    {
+      "company": "Startup Inc",
+      "title": "Software Engineer",
+      "start": "2022-01",
+      "end": "2023-12",
+      "summary": "Developed core REST API endpoints and user interface panels. Integrated payment gateways and message queues."
+    }
+  ],
+  "education": [
+    {
+      "institution": "Stanford University",
+      "degree": "BS in Computer Science",
+      "field": "Computer Science",
+      "end_year": 2021
+    }
+  ],
+  "provenance": [
+    {
+      "field": "full_name",
+      "source": "resume",
+      "method": "direct_extraction_resolved_conflict_with_github"
+    },
+    {
+      "field": "emails",
+      "source": "recruiter_csv",
+      "method": "direct_extraction"
+    },
+    {
+      "field": "emails",
+      "source": "resume",
+      "method": "direct_extraction"
+    },
+    {
+      "field": "phones",
+      "source": "recruiter_csv",
+      "method": "direct_extraction"
+    },
+    {
+      "field": "phones",
+      "source": "resume",
+      "method": "direct_extraction"
+    },
+    {
+      "field": "headline",
+      "source": "resume",
+      "method": "direct_extraction"
+    },
+    {
+      "field": "years_experience",
+      "source": "resume",
+      "method": "direct_extraction"
+    },
+    {
+      "field": "skills",
+      "source": "github",
+      "method": "direct_extraction"
+    },
+    {
+      "field": "skills",
+      "source": "resume",
+      "method": "direct_extraction"
+    },
+    {
+      "field": "experience",
+      "source": "resume",
+      "method": "direct_extraction"
+    },
+    {
+      "field": "education",
+      "source": "resume",
+      "method": "direct_extraction"
+    }
+  ],
+  "overall_confidence": 0.86
+}
