@@ -508,9 +508,9 @@ Demo Video:
 
 Institute of Aeronautical Engineering
 
-B.Tech – Computer Science & Engineering
+B.Tech – Computer Science & Engineering(Data Sciencec)
 
-GitHub: https://github.com/<your-username>
+GitHub: https://github.com/Rams0510
 
 ---
 
